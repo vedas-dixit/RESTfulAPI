@@ -61,11 +61,12 @@
 //     console.log(`server running at port ${PORT}`)
 // })
 
-//* Mongo RestJS
+
 const express = require('express');
 const PORT = 3000;
 
-const bodyparser = require('body-parser')
+const bodyparser = require('body-parser');
+const { setTimeout } = require('timers');
 
 const app = express();
 
@@ -102,6 +103,30 @@ app.get('/books/:id',(req,res)=>{
         res.status(404).json({error: 'book not found'});
     }
 })
+
+app.post('/books',(req,res)=>{
+    const newBook = req.body;
+    newBook.id = books.length +1;
+    books.push(newBook);
+    res.status(201).json(newBook);
+});
+
+
+app.put('/books/:id',(req,res)=>{
+    const bookId = parseInt(req.params.id);
+    const Updatedbook= req.body;
+    books = books.map((book) => (book.id==bookId ? Updatedbook : book));
+    res.json(Updatedbook);
+})
+
+
+app.delete('/books/:id',(req,res)=>{
+    const bookId = parseInt(req.params.id);
+    books = books.filter(book => book.id!=bookId);
+    res.json({message: 'Book deleted Sucessfully!'})
+})
+
+
 
 
 app.listen(PORT, () => {
